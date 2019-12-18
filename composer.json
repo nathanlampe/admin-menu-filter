@@ -1,0 +1,48 @@
+{
+	"name": "nathanlampe/admin-menu-filter",
+	"type": "wordpress-plugin",
+	"license": "GNU",
+	"description": "Advanced phonetic admin menu filter for WordPress",
+	"homepage": "https://nathanlampe.com",
+	"authors": [
+		{
+			"name": "Nathan Lampe",
+			"email": "nlampe@gmail.com",
+			"homepage": "https://www.nathanlampe.com"
+		}
+	],
+	"keywords": [
+		"wordpress", "wp", "admin menu filter", "menu filter", "menu sort", "menu search"
+	],
+	"support": {
+		"issues": "https://nathanlampe.com",
+		"forum": "https://nathanlampe.com/contact"
+	},
+	"config": {
+		"preferred-install": "dist",
+		"optimize-autoloader": true
+	},
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "https://wpackagist.org"
+		}
+	],
+	"require": {
+		"php": ">=7.1",
+		"composer/installers": "^1.4"
+	},
+	"require-dev": {
+		"phpunit/phpunit": "^7",
+		"squizlabs/php_codesniffer": "*",
+		"wp-coding-standards/wpcs": "0.10.0"
+	},
+	"autoload": {
+		"psr-4": {
+			"AdminMenuFilter\\": "inc"
+		}
+	},
+	"scripts": {
+		"phpcs": "phpcs --standard=phpcs.xml"
+	}
+}

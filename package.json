@@ -1,0 +1,34 @@
+{
+	"name": "admin-menu-filter",
+	"version": "1.0.0",
+	"description": "Advanced phonetic admin menu filter for WordPress",
+	"main": "index.js",
+	"browserify": {
+		"transform": [
+			"babelify"
+		]
+	},
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1",
+		"build-js": "browserify -t [ babelify --presets [ @babel/env ] ] --include-path=node_modules assets/js/main.js | uglifyjs -cm > dist/scripts/admin-menu-filter.min.js",
+		"build-css": "lessc --include-path=node_modules assets/less/main.less dist/styles/admin-menu-filter.min.css",
+		"build": "NODE_ENV=production npm run build-js && npm run build-css"
+	},
+	"author": "Nathan Lampe <nlampe@gmail.com>",
+	"license": "ISC",
+	"dependencies": {},
+	"devDependencies": {
+		"autoprefixer": "7.1.6",
+		"babelify": "10.0.0",
+		"@babel/core": "7.1.2",
+		"@babel/preset-env": "7.1.0",
+		"@babel/preset-es2016": "7.0.0-beta.53",
+		"browserify": "latest",
+		"double-metaphone": "^1.0.4",
+		"es6-promise": "^4.1.1",
+		"jshint": "^2.10.3",
+		"less": "^3.8.1",
+		"less-plugin-npm-import": "2.1.0",
+		"uglify-js": "^3.7.2"
+	}
+}
