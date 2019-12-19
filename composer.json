@@ -1,5 +1,5 @@
 {
-	"name": "admin-menu-filter/admin-menu-filter",
+	"name": "nathanlampe/admin-menu-filter",
 	"type": "wordpress-plugin",
 	"license": "GNU",
 	"description": "Advanced phonetic admin menu filter for WordPress",
