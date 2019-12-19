@@ -64,40 +64,4 @@ class AdminMenuFilter {
 		);
 
 	}
-
-	/**
-	 * Active the plugin.
-	 *
-	 * @return  mixed|void
-	 */
-	public static function activation() {
-		// Restrict plugin to admins
-		// you can add other restrictions here.
-		if (
-			! is_admin() ||
-			! current_user_can( 'activate_plugins' )
-		) {
-			return;
-		}
-
-		$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-		check_admin_referer( "activate-plugin_{$plugin}" );
-	}
-
-	/**
-	 * Deactivate the plugin.
-	 *
-	 * @return  mixed|void
-	 */
-	public static function deactivation() {
-		if (
-			! is_admin() ||
-			! current_user_can( 'activate_plugins' )
-		) {
-			return;
-		}
-
-		$plugin = isset( $_REQUEST['plugin'] ) ? $_REQUEST['plugin'] : '';
-		check_admin_referer( "deactivate-plugin_{$plugin}" );
-	}
 }

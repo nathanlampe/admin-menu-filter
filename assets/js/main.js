@@ -32,8 +32,53 @@ class Admin_Menu_Filter {
 	 * Initialize Admin Menu Filter.
 	 */
 	init() {
-		this.AMFPhonetic         = new AMF_Phonetic();
+		this.AMFPhonetic    = new AMF_Phonetic();
+		this.adminMenuItems = this.getAdminMenu() || [];
 		this.createAdminSearchField();
+	}
+
+	getAdminMenu() {
+		let menuItems = {};
+		// Build the admin menu object.
+		this.adminMenu.querySelectorAll( 'li.' + menuTopClass ).forEach(( menuTopItem ) => {
+			let menuNameDiv = menuTopItem.querySelector( '.' + menuNameClass );
+			let menuName    = menuNameDiv.textContent || menuNameDiv.innerText;
+
+			menuItems[ menuTopItem.id ] = {
+				element: menuTopItem,
+				label: this.AMFPhonetic.strToDoubleMetaphone( menuName ),
+				subMenuWrap: null,
+				classes: menuTopItem.classList || [],
+				subMenu: [],
+			};
+
+			// If the admin menu item has a sub-menu, iterate over each sub-item.
+			if ( menuTopItem.classList.contains( hasSubMenuClass ) ) {
+				let subMenuWrap = menuTopItem.querySelector('ul');
+
+				menuItems[ menuTopItem.id ].subMenuWrap = {
+					element: subMenuWrap,
+					classes: subMenuWrap.classList || [],
+				};
+
+				subMenuWrap.querySelectorAll( 'li' ).forEach( ( subMenuListItem ) => {
+					let subMenuLink = subMenuListItem.querySelector( 'a' );
+					if ( subMenuLink ) {
+
+						// Get the text of the sub menu link to compare against the search term.
+						let subMenuListItemName = subMenuLink.textContent || subMenuLink.text;
+
+						menuItems[ menuTopItem.id ].subMenu.push({
+							element: subMenuListItem,
+							label: this.AMFPhonetic.strToDoubleMetaphone( subMenuListItemName ),
+							classes: subMenuListItem.classList || [],
+						});
+					}
+				});
+			}
+		});
+
+		return menuItems;
 	}
 
 	/**
@@ -85,82 +130,55 @@ class Admin_Menu_Filter {
 	 * @param  {string}  searchTerm  Search term.
 	 */
 	searchMenu( searchTerm ) {
-		searchTerm = searchTerm.trim();
 		let matchFound = false;
+		searchTerm     = searchTerm.trim();
 
-		this.adminMenu.querySelectorAll( 'li.' + menuTopClass ).forEach(( menuTopItem ) => {
+		Object.values( this.adminMenuItems ).forEach( ( menuTopItem ) => {
+			let subItemMatch   = false;
+			const subMenuWrap  = menuTopItem.subMenuWrap;
+			const menuTopLabel = menuTopItem.label;
 
-			// Reset the top level menu item to initial state.
-			this.resetItem( menuTopItem );
+			// Reset the top level menu item to initial state
+			// if there is no search text.
+			if ( ! searchTerm ) {
+				this.resetItem( menuTopItem );
 
-			let menuNameDiv  = menuTopItem.querySelector( '.' + menuNameClass );
-			let menuName     = menuNameDiv.textContent || menuNameDiv.innerText;
-			let subItemMatch = false;
-
-			// Set true if there is a phonetic phrase match.
-			matchFound = this.AMFPhonetic.isMatch( searchTerm, menuName );
-
-			// If the admin menu item has a sub-menu, iterate over each sub-item.
-			if ( menuTopItem.classList.contains( hasSubMenuClass ) ) {
-
-				let subMenuWrap = menuTopItem.querySelector('ul');
-				subMenuWrap.querySelectorAll('li').forEach(( subMenuListItem ) => {
-					let subMenuLink = subMenuListItem.querySelector('a');
-					if ( subMenuLink ) {
-						// Reset sub menu link to initial state.
-						this.resetItem( subMenuLink );
-
-						// Get the text of the sub menu link to compare against the search term.
-						let subMenuListItemName = subMenuLink.textContent || subMenuLink.text;
-						let subMenuWords        = subMenuListItemName.split(' ');
-
-						// Check the sub menu link for a phonetic match to the search term.
-						if ( this.AMFPhonetic.isMatch( searchTerm, subMenuListItemName ) ) {
-							subItemMatch = true;
-							this.showItem( subMenuLink );
-						} else {
-							// Display the item if we have a top level match
-							// but not a sub item match. Sub menu items are
-							// hidden by default unless they are in the
-							// current selected menu.
-							if ( matchFound ) {
-								this.showItem( subMenuLink );
-							} else {
-								this.hideItem( subMenuLink );
-							}
-						}
-
-						// Reset the sub menu to initial state if there
-						// isn't a search term.
-						if ( ! searchTerm.length ) {
-							this.resetItem( subMenuLink );
-						}
-					}
-				});
-
-				// Reset the sub menu wrap to initial state.
-				this.resetItem( subMenuWrap );
-
-				if ( searchTerm.length ) {
-					// If we have a sub menu item match, toggle on
-					// the display of the entire sub menu. Otherwise,
-					// hide the sub menu if it isn't in the current
-					// select menu.
-					if ( subItemMatch ) {
-						if ( ! subMenuWrap.classList.contains( currentSubMenuClass ) ) {
-							this.showItem( subMenuWrap );
-						} else {
-							this.hideItem( subMenuWrap );
-						}
-					} else {
-						if ( ! subMenuWrap.classList.contains( currentSubMenuClass ) ) {
-							this.hideItem( subMenuWrap );
-						} else {
-							this.showItem( subMenuWrap );
-						}
-					}
+				if ( subMenuWrap ) {
+					this.resetItem( subMenuWrap );
 				}
 			}
+
+			// Set true if there is a phonetic phrase match.
+			matchFound = this.AMFPhonetic.isMatch( searchTerm, menuTopLabel );
+
+			menuTopItem.subMenu.forEach( ( subMenuListItem ) => {
+				let subMenuLabel = subMenuListItem.label;
+
+				// Reset sub menu to initial state.
+				//this.resetItem( subMenuListItem );
+
+				// Check the sub menu link for a phonetic match to the search term.
+				if ( this.AMFPhonetic.isMatch( searchTerm, subMenuLabel ) ) {
+					subItemMatch = true;
+					this.showItem( subMenuListItem );
+				} else {
+					// Display the item if we have a top level match
+					// but not a sub item match. Sub menu items are
+					// hidden by default unless they are in the
+					// current selected menu.
+					if ( matchFound ) {
+						this.showItem( subMenuListItem );
+					} else {
+						this.hideItem( subMenuListItem );
+					}
+				}
+
+				// Reset the sub menu to initial state if there
+				// isn't a search term.
+				if ( ! searchTerm.length ) {
+ 					this.resetItem( subMenuListItem );
+				}
+			});
 
 			if ( searchTerm.length ) {
 				// Hide the entire menu item if we don't have a
@@ -173,6 +191,26 @@ class Admin_Menu_Filter {
 				} else {
 					this.showItem( menuTopItem );
 				}
+
+				if ( subMenuWrap ) {
+					// If we have a sub menu item match, toggle on
+					// the display of the entire sub menu. Otherwise,
+					// hide the sub menu if it isn't in the current
+					// select menu.
+					if (subItemMatch) {
+						if (!subMenuWrap.classes.contains(currentSubMenuClass)) {
+							this.showItem( subMenuWrap );
+						} else {
+							this.hideItem( subMenuWrap );
+						}
+					} else {
+						if ( ! subMenuWrap.classes.contains( currentSubMenuClass ) ) {
+							this.hideItem( subMenuWrap );
+						} else {
+							this.showItem( subMenuWrap );
+						}
+					}
+				}
 			}
 		});
 	}
@@ -183,11 +221,15 @@ class Admin_Menu_Filter {
 	 * @param  {Element}  menuItem  Menu Item.
 	 */
 	showItem( menuItem ) {
-		if ( ! menuItem.classList.contains( showItemClass ) ) {
-			menuItem.classList.add( showItemClass )
+		if ( ! menuItem.classes.contains( showItemClass ) ) {
+			let menuItemClassList = menuItem.element.classList;
+			menuItemClassList.add( showItemClass );
+			menuItem.classes = menuItemClassList;
 		}
-		if ( menuItem.classList.contains( hideItemClass ) ) {
-			menuItem.classList.remove( hideItemClass )
+		if ( menuItem.classes.contains( hideItemClass ) ) {
+			let menuItemClassList = menuItem.element.classList;
+			menuItemClassList.remove( hideItemClass );
+			menuItem.classes = menuItemClassList;
 		}
 	}
 
@@ -197,11 +239,15 @@ class Admin_Menu_Filter {
 	 * @param  {Element}  menuItem  Menu Item.
 	 */
 	hideItem( menuItem ) {
-		if ( menuItem.classList.contains( showItemClass ) ) {
-			menuItem.classList.remove( showItemClass )
+		if ( menuItem.classes.contains( showItemClass ) ) {
+			let menuItemClassList = menuItem.element.classList;
+			menuItemClassList.remove( showItemClass );
+			menuItem.classes = menuItemClassList;
 		}
-		if ( ! menuItem.classList.contains( hideItemClass ) ) {
-			menuItem.classList.add( hideItemClass )
+		if ( ! menuItem.classes.contains( hideItemClass ) ) {
+			let menuItemClassList = menuItem.element.classList;
+			menuItemClassList.add( hideItemClass );
+			menuItem.classes = menuItemClassList;
 		}
 	}
 
@@ -211,11 +257,15 @@ class Admin_Menu_Filter {
 	 * @param  {Element}  menuItem  Menu Item.
 	 */
 	resetItem( menuItem ) {
-		if ( menuItem.classList.contains( showItemClass ) ) {
-			menuItem.classList.remove( showItemClass )
+		if ( menuItem.classes.contains( showItemClass ) ) {
+			let menuItemClassList = menuItem.element.classList;
+			menuItemClassList.remove( showItemClass );
+			menuItem.classes = menuItemClassList;
 		}
-		if ( menuItem.classList.contains( hideItemClass ) ) {
-			menuItem.classList.remove( hideItemClass )
+		if ( menuItem.classes.contains( hideItemClass ) ) {
+			let menuItemClassList = menuItem.element.classList;
+			menuItemClassList.remove( hideItemClass );
+			menuItem.classes = menuItemClassList;
 		}
 	}
 }

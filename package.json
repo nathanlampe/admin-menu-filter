@@ -15,7 +15,7 @@
 		"build": "NODE_ENV=production npm run build-js && npm run build-css"
 	},
 	"author": "Nathan Lampe <nlampe@gmail.com>",
-	"license": "ISC",
+	"license": "GNU",
 	"dependencies": {},
 	"devDependencies": {
 		"autoprefixer": "7.1.6",

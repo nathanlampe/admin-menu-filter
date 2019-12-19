@@ -19,31 +19,17 @@ export default class AMF_Phonetic {
 	/**
 	 * Compare two strings for a double metaphone match.
 	 *
-	 * @param    {string}  str1  First compare string.
-	 * @param    {string}  str2  Second compare string.
+	 * @param    {string}  str1     First compare string.
+	 * @param    {array}   dmArray  Second compare string.
 	 *
-	 * @returns  {boolean}       Returns true if a match was found.
+	 * @returns  {boolean}          Returns true if a match was found.
 	 */
-	isMatch( str1, str2 ) {
-		let matchFound = false;
-		let dmArray1   = this.strToDoubleMetaphone( str1 );
-		let dmArray2   = this.strToDoubleMetaphone( str2 );
-
-		dmArray1.forEach( ( dmStr1 ) => {
-
-			dmArray2.forEach( ( dmStr2 ) => {
-				if ( dmStr2.search( dmStr1 ) > -1 ) {
-					matchFound = true;
-					return true;
-				}
+	isMatch( str1, dmArray ) {
+		const dmStrArray = this.strToDoubleMetaphone( str1 );
+		return dmStrArray.find( dmStr1 => {
+			return dmArray.find( dmStr2 => {
+				return dmStr2.search( dmStr1 ) > -1;
 			});
-
-			if ( matchFound ) {
-				matchFound = true;
-				return true;
-			}
 		});
-
-		return matchFound;
 	}
 }
