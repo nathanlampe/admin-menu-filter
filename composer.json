@@ -1,7 +1,7 @@
 {
 	"name": "nathanlampe/admin-menu-filter",
 	"type": "wordpress-plugin",
-	"license": "GNU",
+	"license": "GPL-2.0-or-later",
 	"description": "Advanced phonetic admin menu filter for WordPress",
 	"homepage": "https://nathanlampe.com",
 	"authors": [
