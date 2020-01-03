@@ -37,7 +37,10 @@ Automatic installation is the easiest option as WordPress handles the file trans
 == Screenshots ==
 
 == Changelog ==
-Initial Release!
+Add vendor directory to fix autoload
+
+= 1.0.1 =
+Add vendor directory to fix autoload
 
 = 1.0.0 =
 Initial Release!

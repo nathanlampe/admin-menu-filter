@@ -2,7 +2,7 @@
 /**
  * Plugin Name: Admin Menu Filter
  * Description: Advanced phonetic menu filter plugin.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Nathan Lampe
  * Text Domain: admin-menu-filter
  * Domain Path: /languages/
