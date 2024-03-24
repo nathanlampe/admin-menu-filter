@@ -1,6 +1,6 @@
 {
 	"name": "admin-menu-filter",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Advanced phonetic admin menu filter for WordPress",
 	"main": "index.js",
 	"browserify": {
