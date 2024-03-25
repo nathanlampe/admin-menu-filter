@@ -20,7 +20,10 @@
 	},
 	"config": {
 		"preferred-install": "dist",
-		"optimize-autoloader": true
+		"optimize-autoloader": true,
+		"allow-plugins": {
+			"composer/installers": true
+		}
 	},
 	"repositories": [
 		{
@@ -30,7 +33,7 @@
 	],
 	"require": {
 		"php": ">=7.1",
-		"composer/installers": "^1.4"
+		"composer/installers": "^1.0 | ^2.0"
 	},
 	"require-dev": {
 		"squizlabs/php_codesniffer": "*",
